@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="PVMT 3:1 Scanner", page_icon="🦁", layout="wide"
 )
 
-st.title("📈 Scanner PVMT 3:1 Global di Andrea Basso")
+st.title("🦁 Scanner PVMT 3:1 Global di Andrea Basso")
 st.caption(
     "Protocollo Meccanico di Validazione del Trade (Allocazione 1.000€) utile"
     " per trovare azioni che rispettino lo stop loss dinamico (ATR) e il take profit al R/R 3:1,"
