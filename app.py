@@ -18,38 +18,38 @@ st.caption(
 BUDGET_PER_POSIZIONE_EUR = 1000.0
 MOLTIPLICATORE_ATR_SL = 1.5
 
-# Dizionario Ticker -> (Bandiera/Paese, Nome Azienda)
+# Dizionario Ticker -> (Bandiera/Sigla Paese, Nome Azienda)
 INFO_TICKERS = {
     # Italia 🇮🇹
-    "RACE.MI": ("🇮🇹 Italia", "Ferrari N.V."),
-    "STM.MI": ("🇮🇹 Italia", "STMicroelectronics"),
-    "UCG.MI": ("🇮🇹 Italia", "UniCredit S.p.A."),
-    "ISP.MI": ("🇮🇹 Italia", "Intesa Sanpaolo"),
-    "ENI.MI": ("🇮🇹 Italia", "Eni S.p.A."),
-    "ENEL.MI": ("🇮🇹 Italia", "Enel S.p.A."),
-    "STLAM.MI": ("🇮🇹 Italia", "Stellantis N.V."),
-    "G.MI": ("🇮🇹 Italia", "Assicurazioni Generali"),
-    "MONC.MI": ("🇮🇹 Italia", "Moncler S.p.A."),
-    "BMPS.MI": ("🇮🇹 Italia", "Banca Monte dei Paschi"),
-    "A2A.MI": ("🇮🇹 Italia", "A2A S.p.A."),
+    "RACE.MI": ("🇮🇹 IT", "Ferrari N.V."),
+    "STM.MI": ("🇮🇹 IT", "STMicroelectronics"),
+    "UCG.MI": ("🇮🇹 IT", "UniCredit S.p.A."),
+    "ISP.MI": ("🇮🇹 IT", "Intesa Sanpaolo"),
+    "ENI.MI": ("🇮🇹 IT", "Eni S.p.A."),
+    "ENEL.MI": ("🇮🇹 IT", "Enel S.p.A."),
+    "STLAM.MI": ("🇮🇹 IT", "Stellantis N.V."),
+    "G.MI": ("🇮🇹 IT", "Assicurazioni Generali"),
+    "MONC.MI": ("🇮🇹 IT", "Moncler S.p.A."),
+    "BMPS.MI": ("🇮🇹 IT", "Banca Monte dei Paschi"),
+    "A2A.MI": ("🇮🇹 IT", "A2A S.p.A."),
     # Francia 🇫🇷
-    "EL.PA": ("🇫🇷 Francia", "EssilorLuxottica"),
-    "MC.PA": ("🇫🇷 Francia", "LVMH Moët Hennessy"),
-    "SU.PA": ("🇫🇷 Francia", "Schneider Electric"),
-    "TTE.PA": ("🇫🇷 Francia", "TotalEnergies SE"),
+    "EL.PA": ("🇫🇷 FR", "EssilorLuxottica"),
+    "MC.PA": ("🇫🇷 FR", "LVMH Moët Hennessy"),
+    "SU.PA": ("🇫🇷 FR", "Schneider Electric"),
+    "TTE.PA": ("🇫🇷 FR", "TotalEnergies SE"),
     # Olanda / Germania / Spagna 🇳🇱 🇩🇪 🇪🇸
-    "ASML.AS": ("🇳🇱 Olanda", "ASML Holding N.V."),
-    "SAP.DE": ("🇩🇪 Germania", "SAP SE"),
-    "IBE.MC": ("🇪🇸 Spagna", "Iberdrola S.A."),
-    "SAN.MC": ("🇪🇸 Spagna", "Banco Santander"),
+    "ASML.AS": ("🇳🇱 NL", "ASML Holding N.V."),
+    "SAP.DE": ("🇩🇪 DE", "SAP SE"),
+    "IBE.MC": ("🇪🇸 ES", "Iberdrola S.A."),
+    "SAN.MC": ("🇪🇸 ES", "Banco Santander"),
     # USA 🇺🇸
-    "AAPL": ("🇺🇸 USA", "Apple Inc."),
-    "MSFT": ("🇺🇸 USA", "Microsoft Corp."),
-    "NVDA": ("🇺🇸 USA", "NVIDIA Corp."),
-    "AMZN": ("🇺🇸 USA", "Amazon.com Inc."),
-    "GOOGL": ("🇺🇸 USA", "Alphabet Inc."),
-    "META": ("🇺🇸 USA", "Meta Platforms Inc."),
-    "TSLA": ("🇺🇸 USA", "Tesla Inc."),
+    "AAPL": ("🇺🇸 US", "Apple Inc."),
+    "MSFT": ("🇺🇸 US", "Microsoft Corp."),
+    "NVDA": ("🇺🇸 US", "NVIDIA Corp."),
+    "AMZN": ("🇺🇸 US", "Amazon.com Inc."),
+    "GOOGL": ("🇺🇸 US", "Alphabet Inc."),
+    "META": ("🇺🇸 US", "Meta Platforms Inc."),
+    "TSLA": ("🇺🇸 US", "Tesla Inc."),
 }
 
 LISTA_TICKERS = list(INFO_TICKERS.keys())
@@ -66,13 +66,24 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
         progress=False,
         group_by="ticker",
     )
+
     risultati_validati = []
+    risultati_esclusi = []
     totale_analizzati = len(LISTA_TICKERS)
 
     for ticker in LISTA_TICKERS:
+      paese, azienda = INFO_TICKERS.get(ticker, ("🌐 --", ticker))
+
       try:
         df = data[ticker].dropna() if len(LISTA_TICKERS) > 1 else data.dropna()
+
         if df.empty or len(df) < 200:
+          risultati_esclusi.append({
+              "Paese": paese,
+              "Azienda": azienda,
+              "Ticker": ticker,
+              "Motivo Esclusione": "Dati storici insufficienti (< 200 giorni)",
+          })
           continue
 
         is_usa = "." not in ticker
@@ -88,7 +99,17 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
         )
         prezzo_corrente = float(df["Close"].iloc[-1].item())
 
+        # Filtro SMA 200
         if prezzo_corrente <= sma_200_val:
+          risultati_esclusi.append({
+              "Paese": paese,
+              "Azienda": azienda,
+              "Ticker": ticker,
+              "Motivo Esclusione": (
+                  f"Prezzo ({round(prezzo_corrente, 2)} {simbolo_valuta}) "
+                  f"sotto la SMA 200 ({round(sma_200_val, 2)})"
+              ),
+          })
           continue
 
         high_low = df["High"] - df["Low"]
@@ -114,8 +135,6 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
             else controvalore_nominale
         )
 
-        paese, azienda = INFO_TICKERS.get(ticker, ("🌐 Global", ticker))
-
         if num_azioni > 0:
           risultati_validati.append({
               "Paese": paese,
@@ -128,9 +147,25 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
               "Q.tà": num_azioni,
               "Allocato (EUR)": f"{round(controvalore_eur, 2)} €",
           })
-      except Exception:
-        pass
+        else:
+          risultati_esclusi.append({
+              "Paese": paese,
+              "Azienda": azienda,
+              "Ticker": ticker,
+              "Motivo Esclusione": (
+                  f"Prezzo troppo alto ({round(prezzo_corrente, 2)} "
+                  f"{simbolo_valuta}) per l'allocazione di 1.000 €"
+              ),
+          })
+      except Exception as e:
+        risultati_esclusi.append({
+            "Paese": paese,
+            "Azienda": azienda,
+            "Ticker": ticker,
+            "Motivo Esclusione": "Errore nel recupero dati",
+        })
 
+    # --- TABELLA TITOLI IDONEI ---
     if risultati_validati:
       st.success(
           f"Tasso cambio applicato: 1 EUR = {tasso_eur_usd:.4f} USD. Trovati"
@@ -141,3 +176,10 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
       st.dataframe(df_out, use_container_width=True, hide_index=True)
     else:
       st.warning(f"Trovati 0 titoli idonei di {totale_analizzati} analizzati.")
+
+    # --- TABELLA TITOLI ESCLUSI ---
+    if risultati_esclusi:
+      st.markdown("---")
+      st.subheader(f"❌ Titoli Esclusi dal Protocollo ({len(risultati_esclusi)})")
+      df_esclusi = pd.DataFrame(risultati_esclusi)
+      st.dataframe(df_esclusi, use_container_width=True, hide_index=True)
