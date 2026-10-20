@@ -18,68 +18,41 @@ st.caption(
 BUDGET_PER_POSIZIONE_EUR = 1000.0
 MOLTIPLICATORE_ATR_SL = 1.5
 
-LISTA_TICKERS = [
-    # ==========================================
-    # 🇺🇸 STATI UNITI (Mega-Cap, Alta Liquidità)
-    # ==========================================
-    # Tech, AI & Communication
-    "AAPL",   # Apple
-    "MSFT",   # Microsoft
-    "NVDA",   # Nvidia
-    "GOOGL",  # Alphabet
-    "META",   # Meta Platforms
-    "AVGO",   # Broadcom
-    "AMD",    # Advanced Micro Devices
-    # Consumer & Auto
-    "AMZN",   # Amazon
-    "TSLA",   # Tesla
-    "WMT",    # Walmart
-    # Finance, Health & Energy
-    "JPM",    # JPMorgan Chase
-    "V",      # Visa
-    "MA",     # Mastercard
-    "LLY",    # Eli Lilly
-    "UNH",    # UnitedHealth Group
-    "XOM",    # ExxonMobil
+# Dizionario Ticker -> (Bandiera/Paese, Nome Azienda)
+INFO_TICKERS = {
+    # Italia 🇮🇹
+    "RACE.MI": ("🇮🇹 Italia", "Ferrari N.V."),
+    "STM.MI": ("🇮🇹 Italia", "STMicroelectronics"),
+    "UCG.MI": ("🇮🇹 Italia", "UniCredit S.p.A."),
+    "ISP.MI": ("🇮🇹 Italia", "Intesa Sanpaolo"),
+    "ENI.MI": ("🇮🇹 Italia", "Eni S.p.A."),
+    "ENEL.MI": ("🇮🇹 Italia", "Enel S.p.A."),
+    "STLAM.MI": ("🇮🇹 Italia", "Stellantis N.V."),
+    "G.MI": ("🇮🇹 Italia", "Assicurazioni Generali"),
+    "MONC.MI": ("🇮🇹 Italia", "Moncler S.p.A."),
+    "BMPS.MI": ("🇮🇹 Italia", "Banca Monte dei Paschi"),
+    "A2A.MI": ("🇮🇹 Italia", "A2A S.p.A."),
+    # Francia 🇫🇷
+    "EL.PA": ("🇫🇷 Francia", "EssilorLuxottica"),
+    "MC.PA": ("🇫🇷 Francia", "LVMH Moët Hennessy"),
+    "SU.PA": ("🇫🇷 Francia", "Schneider Electric"),
+    "TTE.PA": ("🇫🇷 Francia", "TotalEnergies SE"),
+    # Olanda / Germania / Spagna 🇳🇱 🇩🇪 🇪🇸
+    "ASML.AS": ("🇳🇱 Olanda", "ASML Holding N.V."),
+    "SAP.DE": ("🇩🇪 Germania", "SAP SE"),
+    "IBE.MC": ("🇪🇸 Spagna", "Iberdrola S.A."),
+    "SAN.MC": ("🇪🇸 Spagna", "Banco Santander"),
+    # USA 🇺🇸
+    "AAPL": ("🇺🇸 USA", "Apple Inc."),
+    "MSFT": ("🇺🇸 USA", "Microsoft Corp."),
+    "NVDA": ("🇺🇸 USA", "NVIDIA Corp."),
+    "AMZN": ("🇺🇸 USA", "Amazon.com Inc."),
+    "GOOGL": ("🇺🇸 USA", "Alphabet Inc."),
+    "META": ("🇺🇸 USA", "Meta Platforms Inc."),
+    "TSLA": ("🇺🇸 USA", "Tesla Inc."),
+}
 
-    # ==========================================
-    # 🇪🇺 EUROPA (Euronext, Xetra, BME)
-    # ==========================================
-    # Tech & Lusso
-    "ASML.AS", # ASML Holding (Amsterdam)
-    "SAP.DE",  # SAP SE (Francoforte)
-    "MC.PA",   # LVMH (Parigi)
-    "EL.PA",   # EssilorLuxottica (Parigi)
-    # Industria & Energia
-    "SU.PA",   # Schneider Electric (Parigi)
-    "IBE.MC",  # Iberdrola (Madrid)
-    "TTE.PA",  # TotalEnergies (Parigi)
-    # Finanza & Telecom
-    "SAN.MC",  # Banco Santander (Madrid)
-    "DTE.DE",  # Deutsche Telekom (Francoforte)
-    "BNP.PA",  # BNP Paribas (Parigi)
-
-    # ==========================================
-    # 🇮🇹 ITALIA (Borsa Italiana - FTSE MIB)
-    # ==========================================
-    # Bancari (Altissimi Volumi)
-    "ISP.MI",  # Intesa Sanpaolo
-    "UCG.MI",  # UniCredit
-    "BMPS.MI", # Monte dei Paschi di Siena
-    "BAMI.MI", # Banco BPM
-    # Energia & Utility (Altissimi Volumi)
-    "ENEL.MI", # Enel
-    "ENI.MI",  # Eni
-    "A2A.MI",  # A2A
-    "SRG.MI",  # Snam
-    # Industria, Motori & Lusso
-    "STLAM.MI",# Stellantis
-    "PRY.MI",  # Prysmian
-    "RACE.MI", # Ferrari (Ottimo trend, volumi medio-bassi)
-    "STM.MI",  # STMicroelectronics
-    "G.MI",    # Assicurazioni Generali
-    "MONC.MI", # Moncler (Ottimo trend, volumi medio-bassi)
-]
+LISTA_TICKERS = list(INFO_TICKERS.keys())
 
 if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
   with st.spinner("Analisi dei mercati in corso..."):
@@ -141,8 +114,12 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
             else controvalore_nominale
         )
 
+        paese, azienda = INFO_TICKERS.get(ticker, ("🌐 Global", ticker))
+
         if num_azioni > 0:
           risultati_validati.append({
+              "Paese": paese,
+              "Azienda": azienda,
               "Ticker": ticker,
               "Prezzo": f"{round(prezzo_corrente, 2)} {simbolo_valuta}",
               "SMA 200": round(sma_200_val, 2),
