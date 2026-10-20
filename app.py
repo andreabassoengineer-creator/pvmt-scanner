@@ -19,27 +19,66 @@ BUDGET_PER_POSIZIONE_EUR = 1000.0
 MOLTIPLICATORE_ATR_SL = 1.5
 
 LISTA_TICKERS = [
-    "RACE.MI",
-    "STM.MI",
-    "UCG.MI",
-    "ISP.MI",
-    "ENI.MI",
-    "ENEL.MI",
-    "STLAM.MI",
-    "G.MI",
-    "MONC.MI",
-    "EL.PA",
-    "MC.PA",
-    "SU.PA",
-    "ASML.AS",
-    "SAP.DE",
-    "AAPL",
-    "MSFT",
-    "NVDA",
-    "AMZN",
-    "GOOGL",
-    "META",
-    "TSLA",
+    # ==========================================
+    # 🇺🇸 STATI UNITI (Mega-Cap, Alta Liquidità)
+    # ==========================================
+    # Tech, AI & Communication
+    "AAPL",   # Apple
+    "MSFT",   # Microsoft
+    "NVDA",   # Nvidia
+    "GOOGL",  # Alphabet
+    "META",   # Meta Platforms
+    "AVGO",   # Broadcom
+    "AMD",    # Advanced Micro Devices
+    # Consumer & Auto
+    "AMZN",   # Amazon
+    "TSLA",   # Tesla
+    "WMT",    # Walmart
+    # Finance, Health & Energy
+    "JPM",    # JPMorgan Chase
+    "V",      # Visa
+    "MA",     # Mastercard
+    "LLY",    # Eli Lilly
+    "UNH",    # UnitedHealth Group
+    "XOM",    # ExxonMobil
+
+    # ==========================================
+    # 🇪🇺 EUROPA (Euronext, Xetra, BME)
+    # ==========================================
+    # Tech & Lusso
+    "ASML.AS", # ASML Holding (Amsterdam)
+    "SAP.DE",  # SAP SE (Francoforte)
+    "MC.PA",   # LVMH (Parigi)
+    "EL.PA",   # EssilorLuxottica (Parigi)
+    # Industria & Energia
+    "SU.PA",   # Schneider Electric (Parigi)
+    "IBE.MC",  # Iberdrola (Madrid)
+    "TTE.PA",  # TotalEnergies (Parigi)
+    # Finanza & Telecom
+    "SAN.MC",  # Banco Santander (Madrid)
+    "DTE.DE",  # Deutsche Telekom (Francoforte)
+    "BNP.PA",  # BNP Paribas (Parigi)
+
+    # ==========================================
+    # 🇮🇹 ITALIA (Borsa Italiana - FTSE MIB)
+    # ==========================================
+    # Bancari (Altissimi Volumi)
+    "ISP.MI",  # Intesa Sanpaolo
+    "UCG.MI",  # UniCredit
+    "BMPS.MI", # Monte dei Paschi di Siena
+    "BAMI.MI", # Banco BPM
+    # Energia & Utility (Altissimi Volumi)
+    "ENEL.MI", # Enel
+    "ENI.MI",  # Eni
+    "A2A.MI",  # A2A
+    "SRG.MI",  # Snam
+    # Industria, Motori & Lusso
+    "STLAM.MI",# Stellantis
+    "PRY.MI",  # Prysmian
+    "RACE.MI", # Ferrari (Ottimo trend, volumi medio-bassi)
+    "STM.MI",  # STMicroelectronics
+    "G.MI",    # Assicurazioni Generali
+    "MONC.MI", # Moncler (Ottimo trend, volumi medio-bassi)
 ]
 
 if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
@@ -55,6 +94,7 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
         group_by="ticker",
     )
     risultati_validati = []
+    totale_analizzati = len(LISTA_TICKERS)
 
     for ticker in LISTA_TICKERS:
       try:
@@ -117,9 +157,10 @@ if st.button("🚀 Esegui Scanner Ora", use_container_width=True):
     if risultati_validati:
       st.success(
           f"Tasso cambio applicato: 1 EUR = {tasso_eur_usd:.4f} USD. Trovati"
-          f" {len(risultati_validati)} titoli idonei!"
+          f" {len(risultati_validati)} titoli idonei di {totale_analizzati}"
+          " analizzati!"
       )
       df_out = pd.DataFrame(risultati_validati)
       st.dataframe(df_out, use_container_width=True, hide_index=True)
     else:
-      st.warning("Nessun titolo idoneo trovato oggi.")
+      st.warning(f"Trovati 0 titoli idonei di {totale_analizzati} analizzati.")
