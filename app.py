@@ -8,6 +8,14 @@ st.set_page_config(
     page_title="PVMT 3:1 Scanner", page_icon="🦁", layout="wide"
 )
 
+# --- INSERIMENTO IMMAGINE ---
+try:
+    # Inserisce l'immagine a larghezza intera
+    st.image("image_0d1054.jpg", use_container_width=True)
+except FileNotFoundError:
+    st.error("Immagine 'image_0d1054.jpg' non trovata. Assicurati che sia nella stessa cartella di questo file Python.")
+# ----------------------------
+
 st.title("🦁 Scanner PVMT 3:1 Global di Andrea Basso")
 st.caption(
     "Protocollo Meccanico di Validazione del Trade (Allocazione 1.000€) utile"
