@@ -8,8 +8,12 @@ st.set_page_config(
     page_title="PVMT 3:1 Scanner", page_icon="📈", layout="wide"
 )
 
-st.title("📈 Scanner PVMT 3:1 Global")
-st.caption("Protocollo Meccanico di Validazione del Trade (Allocazione 1.000 €)")
+st.title("📈 Scanner PVMT 3:1 Global di Andrea Basso")
+st.caption(
+    "Protocollo Meccanico di Validazione del Trade (Allocazione 1.000€) utile"
+    " per trovare azioni che rispettino lo stop loss al 3% e il take profit al 9%"
+    " valutando la volatilità del titolo."
+)
 
 BUDGET_PER_POSIZIONE_EUR = 1000.0
 MOLTIPLICATORE_ATR_SL = 1.5
