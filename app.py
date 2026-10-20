@@ -5,7 +5,7 @@ import yfinance as yf
 
 # Configurazione Pagina per Mobile
 st.set_page_config(
-    page_title="PVMT 3:1 Scanner", page_icon="📈", layout="wide"
+    page_title="PVMT 3:1 Scanner", page_icon="🦁", layout="wide"
 )
 
 st.title("📈 Scanner PVMT 3:1 Global di Andrea Basso")
